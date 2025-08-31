@@ -102,7 +102,7 @@ def is_trusted_url(url):
 def predict_news(text):
     vec = vectorizer.transform([text])
     pred = model.predict(vec)
-    label = "🟩 REAL NEWS" if pred[0] == 1 else "🟥 FAKE NEWS"
+    label = "🟥 FAKE NEWS" if pred[0] == 1 else "🟩 REAL NEWS"
 
     results = google_search(text)
     trusted = [r for r in results if is_trusted_url(r['url'])]
