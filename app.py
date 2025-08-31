@@ -76,8 +76,8 @@ trusted_sources = [
 
 # Google Search API settings
 # Replace with your actual API key and Search Engine ID
-API_KEY = "AIzaSyA4T2I7q1DetLy9zhbM68KRakDsQOnoo7w"
-SEARCH_ENGINE_ID = "37002a679147b437b"
+API_KEY = "YOUR_GOOGLE_API_KEY" # Replace with your actual API key
+SEARCH_ENGINE_ID = "YOUR_SEARCH_ENGINE_ID" # Replace with your actual Search Engine ID
 
 
 def google_search(query, num=5):
@@ -102,19 +102,25 @@ def is_trusted_url(url):
 def predict_news(text):
     vec = vectorizer.transform([text])
     pred = model.predict(vec)
-    label = "🟥 FAKE NEWS" if pred[0] == 1 else "🟩 REAL NEWS"
+    ml_prediction_is_fake = pred[0] == 1
 
     results = google_search(text)
     trusted = [r for r in results if is_trusted_url(r['url'])]
 
     st.subheader("🔎 Verified Sources:")
     if trusted:
+        st.write("Found supporting evidence from trusted sources:")
         for r in trusted:
             st.write(f"✔️ [{r['title']}]({r['url']})")
+        # If trusted sources are found, lean towards REAL NEWS
+        final_prediction = "🟩 REAL NEWS"
     else:
-        st.write("⚠️ No trusted sources found.")
+        st.write("⚠️ No strong supporting evidence found from trusted sources.")
+        # If no trusted sources, rely on the ML model's prediction
+        final_prediction = "🟥 FAKE NEWS" if ml_prediction_is_fake else "🟩 REAL NEWS"
 
-    return label
+
+    return final_prediction
 
 
 # Streamlit app
