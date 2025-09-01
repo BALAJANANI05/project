@@ -11,7 +11,7 @@ vectorizer = joblib.load("tfidf_vectorizer.pkl")
 trusted_sources = [
     # English & Global
     "bbc.com", "reuters.com", "apnews.com", "theguardian.com", "cnn.com", "nytimes.com",
-    "theatlantic.com", "economist.com", "aljazeera.com",
+    "theatlantic.com", "economist.com", "aljazeera.com","ndtv.com",
 
     # European & Multi-language broadcasters
     "dw.com",               # Deutsche Welle
