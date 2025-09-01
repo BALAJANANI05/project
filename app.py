@@ -9,9 +9,7 @@ vectorizer = joblib.load("tfidf_vectorizer.pkl")
 
 # Trusted sources
 trusted_sources = [
-    "thehindu.com", "indianexpress.com", "bbc.com", "cnn.com", "reuters.com",
-    "nytimes.com", "apnews.com", "theguardian.com", "npr.org", "forbes.com",
-    "dw.com", "aljazeera.com", "timesofindia.indiatimes.com",# English & Global
+    # English & Global
     "bbc.com", "reuters.com", "apnews.com", "theguardian.com", "cnn.com", "nytimes.com",
     "theatlantic.com", "economist.com", "aljazeera.com",
 
@@ -30,12 +28,14 @@ trusted_sources = [
     "efe.com",              # Agencia EFE
     "anadoluagency.com",    # Anadolu Agency
     "tass.com",             # TASS (Russia)
-    "ipsnews.net"           # Inter Press Service
- # Tamil-language major outlets
+    "ipsnews.net",          # Inter Press Service
+
+    # Tamil-language major outlets
     "dailythanthi.com", "dinamalar.com", "dinamani.com", "malaimalar.com",
-    "dinakaran.com", "tamil.thehindu.com", "thinaboomi.com", "theekkathir.in",
+    "dinakaran.com", "tamil.thehindu.com", "thinaboomi.in", "theekkathir.in",
     "viduthalai.in", "tamilmurasu.com.sg", "thuglak.com", "ibctamil.com",
-# United States
+
+    # United States
     "nytimes.com", "washingtonpost.com", "wsj.com", "usatoday.com",
     "latimes.com", "chicagotribune.com", "bostonglobe.com",
 
@@ -48,7 +48,7 @@ trusted_sources = [
     "theglobeandmail.com", "nationalpost.com", "torontostar.com",
 
     # India
-    "timesofindia.indiatimes.com",
+    "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com",
 
     # Australia
     "smh.com.au", "theage.com.au", "afr.com", "abc.net.au",
@@ -83,20 +83,24 @@ SEARCH_ENGINE_ID = "YOUR_SEARCH_ENGINE_ID" # Replace with your actual Search Eng
 def google_search(query, num=5):
     url = 'https://www.googleapis.com/customsearch/v1'
     params = {'key': API_KEY, 'cx': SEARCH_ENGINE_ID, 'q': query, 'num': num}
-    res = requests.get(url, params=params)
-    results = []
-    if res.status_code == 200:
+    try:
+        res = requests.get(url, params=params)
+        res.raise_for_status()  # Raise an exception for bad status codes
+        results = []
         for item in res.json().get('items', []):
             results.append({
                 'title': item['title'],
                 'url': item['link']
             })
-    return results
+        return results
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error during Google Search: {e}")
+        return []
 
 
 def is_trusted_url(url):
     domain = urlparse(url).netloc.lower().replace("www.", "")
-    return any(t in domain for t in trusted_sources)
+    return any(trusted in domain for trusted in trusted_sources)
 
 
 def predict_news(text):
@@ -112,11 +116,14 @@ def predict_news(text):
         st.write("Found supporting evidence from trusted sources:")
         for r in trusted:
             st.write(f"✔️ [{r['title']}]({r['url']})")
-        # If trusted sources are found, lean towards REAL NEWS
-        final_prediction = "🟩 REAL NEWS"
+        # If trusted sources are found and ML model predicts fake,
+        # consider it potentially real, but still show ML prediction.
+        # If trusted sources are found and ML model predicts real,
+        # confirm it as real.
+        final_prediction = "🟩 REAL NEWS" if not ml_prediction_is_fake else "⚠️ Potentially REAL NEWS (ML predicted FAKE)"
     else:
         st.write("⚠️ No strong supporting evidence found from trusted sources.")
-        # If no trusted sources, rely on the ML model's prediction
+        # If no trusted sources, rely solely on the ML model's prediction
         final_prediction = "🟥 FAKE NEWS" if ml_prediction_is_fake else "🟩 REAL NEWS"
 
 
