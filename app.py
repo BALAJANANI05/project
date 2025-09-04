@@ -131,7 +131,9 @@ st.markdown(
     """
     <style>
     body {
-        background-color: #f0f2f6; /* Light gray background */
+         background-image: url('https://storage.googleapis.com/kaggle-datasets-images/4641663/7902961/f1b27c2de982ca5374002a9e6b5a00fc/dataset-card.jpg?t=2024-03-21-13-43-45'); /* path to your image */
+    background-size: cover; /* cover the entire screen */
+    background-repeat: no-repeat;
         font-family: 'Arial', sans-serif;
     }
     .stTextInput textarea {
