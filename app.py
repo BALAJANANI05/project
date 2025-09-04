@@ -120,7 +120,7 @@ def predict_news(text):
         # consider it potentially real, but still show ML prediction.
         # If trusted sources are found and ML model predicts real,
         # confirm it as real.
-        final_prediction = "🟩 REAL NEWS" if not ml_prediction_is_fake else "⚠️ Potentially REAL NEWS (ML predicted FAKE)"
+        final_prediction = "🟩 REAL NEWS" if not ml_prediction_is_fake 
     else:
         st.write("⚠️ No strong supporting evidence found from trusted sources.")
         # If no trusted sources, rely solely on the ML model's prediction
