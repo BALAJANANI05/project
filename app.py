@@ -116,75 +116,29 @@ def predict_news(text):
         st.write("Found supporting evidence from trusted sources:")
         for r in trusted:
             st.write(f"✔️ [{r['title']}]({r['url']})")
+        # If trusted sources are found and ML model predicts fake,
+        # consider it potentially real, but still show ML prediction.
+        # If trusted sources are found and ML model predicts real,
+        # confirm it as real.
         final_prediction = "🟩 REAL NEWS" if not ml_prediction_is_fake else "🟥 FAKE NEWS"
     else:
         st.write("⚠️ No strong supporting evidence found from trusted sources.")
+        # If no trusted sources, rely solely on the ML model's prediction
         final_prediction = "🟥 FAKE NEWS" if ml_prediction_is_fake else "🟩 REAL NEWS"
+
 
     return final_prediction
 
 
 # Streamlit app
-st.set_page_config(layout="wide", page_title="Fake News Detector", page_icon="📰") # Set favicon here
-
-st.markdown(
-    """
-    <style>
-    body {
-         background-image: url('https://i.ytimg.com/vi/OI7b8uI2x-s/maxresdefault.jpg');
-    background-size: cover; /* cover the entire screen */
-    background-repeat: no-repeat;
-        font-family: 'Arial', sans-serif;
-    }
-    .stTextInput textarea {
-        font-size: 16px;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
-    .stButton button {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 20px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        cursor: pointer;
-        border-radius: 5px;
-        border: none;
-    }
-    .stButton button:hover {
-        background-color: #45a049;
-    }
-    .stMarkdown h1 {
-        color: #333;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .stMarkdown h2 {
-        color: #555;
-        margin-top: 20px;
-        margin-bottom: 10px;
-    }
-    .stMarkdown {
-        line-height: 1.6;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 st.title("📰 Smart Fake News Detector (with Google Verification)")
 st.markdown("Enter a news article or headline to detect if it's REAL or FAKE using machine learning and verify with trusted Google sources.")
 
-# Use a container for input and button
-with st.container():
-    user_input = st.text_area("Paste your news content or headline here...", height=200)
-    if st.button("Analyze News"):
-        if user_input:
-            prediction = predict_news(user_input)
-            st.markdown(f"## {prediction}")
-        else:
-            st.warning("Please enter some text to analyze.")
+user_input = st.text_area("Paste your news content or headline here...", height=200)
+
+if st.button("Analyze News"):
+    if user_input:
+        prediction = predict_news(user_input)
+        st.markdown(f"## {prediction}")
+    else:
+        st.warning("Please enter some text to analyze.")
