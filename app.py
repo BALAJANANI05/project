@@ -2,6 +2,7 @@ import streamlit as st
 import joblib
 import requests
 from urllib.parse import urlparse
+import time # Import time for adding delays
 
 # Load model and vectorizer
 model = joblib.load("fake_news_model.pkl")
@@ -84,6 +85,7 @@ def google_search(query, num=5):
     url = 'https://www.googleapis.com/customsearch/v1'
     params = {'key': API_KEY, 'cx': SEARCH_ENGINE_ID, 'q': query, 'num': num}
     try:
+        time.sleep(1) # Add a small delay
         res = requests.get(url, params=params)
         res.raise_for_status()  # Raise an exception for bad status codes
         results = []
