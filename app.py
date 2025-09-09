@@ -134,7 +134,7 @@ def predict_news(text):
         st.write("Found supporting evidence from trusted sources:")
         for r in verified_sources:
             st.write(f"✔️ [{r['title']}]({r['url']})")
-        final_prediction = "🟩 REAL NEWS" if not ml_prediction_is_fake else "🟥 PARTIALLY REAL NEWS [may be a LIVE update]"
+        final_prediction = "🟩 REAL NEWS" if not ml_prediction_is_fake else "🟥 FAKE NEWS"
     else:
         st.write("⚠️ No strong supporting evidence found from trusted sources.")
         final_prediction = "🟥 FAKE NEWS" if ml_prediction_is_fake else "🟩 REAL NEWS"
