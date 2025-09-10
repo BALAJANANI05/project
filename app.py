@@ -3,6 +3,7 @@ import joblib
 import requests
 from urllib.parse import urlparse
 import time
+import nltk
 from bs4 import BeautifulSoup # Import BeautifulSoup for parsing HTML
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -12,6 +13,10 @@ import nltk
 # from nltk.tokenize import word_tokenize # Keep this import for tokenization
 
 # Download necessary NLTK data
+try:
+    nltk.download('punkt')
+except Exception as e:
+    print(f"Download failed: {e}")
 try:
     nltk.data.find('tokenizers/punkt')
 except nltk.downloader.DownloadError: # Referencing through nltk.downloader
