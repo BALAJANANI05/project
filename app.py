@@ -8,18 +8,21 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import re # Import re for cleaning text
 import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
+# from nltk.corpus import stopwords # Keep this import for stopwords
+# from nltk.tokenize import word_tokenize # Keep this import for tokenization
 
 # Download necessary NLTK data
 try:
     nltk.data.find('tokenizers/punkt')
-except nltk.downloader.DownloadError:
+except nltk.downloader.DownloadError: # Referencing through nltk.downloader
     nltk.download('punkt')
 try:
     nltk.data.find('corpora/stopwords')
-except nltk.downloader.DownloadError:
+except nltk.downloader.DownloadError: # Referencing through nltk.downloader
     nltk.download('stopwords')
+
+from nltk.corpus import stopwords # Import stopwords here
+from nltk.tokenize import word_tokenize # Import word_tokenize here
 
 
 # Load model and vectorizer
@@ -210,21 +213,24 @@ def predict_news(text):
     search_results = google_search(text)
     is_verified, verified_sources = verify_with_sources(text, search_results)
 
-    st.subheader("🤖 ML Model Prediction:")
-    st.write("Based on the trained model:", "🟥 FAKE NEWS" if ml_prediction_is_fake else "🟩 REAL NEWS")
-
     st.subheader("🔎 Verification from Trusted Sources:")
     if verified_sources:
         st.write("Found supporting evidence from trusted sources:")
         for r in verified_sources:
             st.write(f"✔️ [{r['title']}]({r['url']})")
-        final_prediction = "🟩 REAL NEWS" # If trusted sources support it, it's likely real
+        # If trusted sources are found and ML model predicts fake,
+        # consider it potentially real, but still show ML prediction.
+        # If trusted sources are found and ML model predicts real,
+        # confirm it as real.
+        final_prediction = "🟩 REAL NEWS" if not ml_prediction_is_fake else "🟥 FAKE NEWS"
     else:
         st.write("⚠️ No strong supporting evidence found from trusted sources.")
-        # If no trusted sources, rely solely on the ML model's prediction
         final_prediction = "🟥 FAKE NEWS" if ml_prediction_is_fake else "🟩 REAL NEWS"
 
-    st.subheader("✨ Final Prediction:")
+    st.subheader("🤖 ML Model Prediction:")
+    st.write("Based on the trained model:", "🟥 FAKE NEWS" if ml_prediction_is_fake else "🟩 REAL NEWS")
+
+
     return final_prediction
 
 
