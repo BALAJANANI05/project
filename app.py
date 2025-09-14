@@ -270,16 +270,3 @@ with st.container():
         else:
             st.warning("Please enter some text to analyze.")
 
-st.markdown("---") # Add a separator
-
-st.header("✨ Latest News from Trusted Sources")
-
-if st.button("Fetch Latest News"):
-    latest_news_data = get_latest_news_from_trusted_sources()
-    if latest_news_data:
-        for source, news_list in latest_news_data.items():
-            st.subheader(f"From {source}:")
-            for news_item in news_list:
-                st.write(f"- [{news_item['title']}]({news_item['url']})")
-    else:
-        st.info("Could not fetch latest news from trusted sources.")
