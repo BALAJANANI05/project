@@ -6,5 +6,3 @@ matplotlib
 seaborn
 joblib
 requests
-beautifulsoup4
-nltk
