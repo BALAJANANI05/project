@@ -111,16 +111,27 @@ def verify_with_sources(text, search_results):
     if not trusted_results:
         return False, []
 
-    # Simple check: see if any trusted source snippet contains significant parts of the input text
-    # A more sophisticated approach would involve checking the actual linked page content
-    # and using NLP techniques for comparison.
     text_lower = text.lower()
+    # A more robust check: calculate a score based on keyword overlap and presence in trusted sources
+    keywords = text_lower.split()
+    score = 0
     matching_sources = []
+
     for r in trusted_results:
-        if any(word in r['snippet'].lower() for word in text_lower.split()[:10]): # Check first 10 words
+        snippet_lower = r['snippet'].lower()
+        title_lower = r['title'].lower()
+        # Increase score for each keyword found in snippet or title
+        keyword_matches = sum(word in snippet_lower or word in title_lower for word in keywords)
+        score += keyword_matches
+        if keyword_matches > 0: # Consider a source as "matching" if at least one keyword is found
              matching_sources.append(r)
 
-    return bool(matching_sources), matching_sources
+    # Determine if verification is successful based on the score and number of matching sources
+    # This threshold might need tuning based on your data and desired strictness
+    verification_threshold = len(keywords) * 0.8 # Example: require 80% of keywords to be found
+    is_verified = score >= verification_threshold and len(matching_sources) > 0
+
+    return is_verified, matching_sources
 
 
 def predict_news(text):
@@ -137,10 +148,16 @@ def predict_news(text):
         st.write("Found supporting evidence from trusted sources:")
         for r in verified_sources:
             st.write(f"✔️ [{r['title']}]({r['url']})")
-        final_prediction = "🟩 REAL NEWS" if not ml_prediction_is_fake else "🟥 FAKE NEWS"
+
+    if is_verified:
+        # If verification from trusted sources is successful, classify as REAL
+        final_prediction = "🟩 REAL NEWS"
+    elif ml_prediction_is_fake:
+        # If no verification from trusted sources and ML model predicts fake, classify as FAKE
+        final_prediction = "🟥 FAKE NEWS"
     else:
-        st.write("⚠️ No strong supporting evidence found from trusted sources.")
-        final_prediction = "🟥 FAKE NEWS" if ml_prediction_is_fake else "🟩 REAL NEWS"
+        # If no verification from trusted sources and ML model predicts real, classify as REAL (less confident)
+        final_prediction = "🟩 REAL NEWS (Unverified)"
 
 
     return final_prediction
