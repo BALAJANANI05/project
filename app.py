@@ -31,7 +31,10 @@ trusted_sources = [
     "anadoluagency.com",    # Anadolu Agency
     "tass.com",             # TASS (Russia)
     "ipsnews.net",          # Inter Press Service
-
+"deccanherald.com","hindustantimes.com",
+"deccanherald.com","jagran.com","amarujala.com","manoramaonline.com","eenadu.net","dinamalar.com",
+"anandabazar.com","ndtv.com","indiatoday.in","timesnownews.com","aajtak.in","news18.com","thanthitv.com","puthiyathalaimurai.com","abpananda.abplive.in",
+  "tv9hindi.com","asianetnews.com",
     # Tamil-language major outlets
     "dailythanthi.com", "dinamalar.com", "dinamani.com", "malaimalar.com",
     "dinakaran.com", "tamil.thehindu.com", "thinaboomi.in", "theekkathir.in",
@@ -50,7 +53,8 @@ trusted_sources = [
     "theglobeandmail.com", "nationalpost.com", "torontostar.com",
 
     # India
-    "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com","pmindia.gov.in",
+    "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com","pmindia.gov.in","tn.gov.in","it.tn.gov.in","tnsic.gov.in","tn.gov.in/stationeryprinting/gazette","tn.nic.in",
+
 
     # Australia
     "smh.com.au", "theage.com.au", "afr.com", "abc.net.au",
