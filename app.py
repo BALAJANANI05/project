@@ -111,15 +111,13 @@ def verify_with_sources(text, search_results):
     if not trusted_results:
         return False, []
 
+    # Simple check: see if any trusted source snippet contains significant parts of the input text
+    # A more sophisticated approach would involve checking the actual linked page content
+    # and using NLP techniques for comparison.
     text_lower = text.lower()
     matching_sources = []
-    # A more robust check: look for keywords from the input text in the snippet and title of trusted sources
-    keywords = text_lower.split()
     for r in trusted_results:
-        snippet_lower = r['snippet'].lower()
-        title_lower = r['title'].lower()
-        # Check if a significant number of keywords from the input text are present in the snippet or title
-        if sum(word in snippet_lower or word in title_lower for word in keywords) > len(keywords) * 0.5: # Example threshold
+        if any(word in r['snippet'].lower() for word in text_lower.split()[:10]): # Check first 10 words
              matching_sources.append(r)
 
     return bool(matching_sources), matching_sources
@@ -139,11 +137,9 @@ def predict_news(text):
         st.write("Found supporting evidence from trusted sources:")
         for r in verified_sources:
             st.write(f"✔️ [{r['title']}]({r['url']})")
-        # If trusted sources are found and the verification logic confirms relevance, assume the news is real
-        final_prediction = "🟩 REAL NEWS" if not ml_prediction_is_fake else "🟥 FAKE NEWS" 
+        final_prediction = "🟩 REAL NEWS" if not ml_prediction_is_fake else "🟥 FAKE NEWS"
     else:
         st.write("⚠️ No strong supporting evidence found from trusted sources.")
-        # If no trusted sources or verification fails, rely solely on the ML model's prediction
         final_prediction = "🟥 FAKE NEWS" if ml_prediction_is_fake else "🟩 REAL NEWS"
 
 
