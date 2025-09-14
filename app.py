@@ -39,7 +39,7 @@ trusted_sources = [
 
     # United States
     "nytimes.com", "washingtonpost.com", "wsj.com", "usatoday.com",
-    "latimes.com", "chicagotribune.com", "bostonglobe.com",
+    "latimes.com", "chicagotribune.com", "bostonglobe.com","ap.org","reutersagency.com","whitehouse.gov","edition.cnn.com",
 
     # United Kingdom
     "theguardian.com", "dailymail.co.uk", "thetimes.co.uk", "telegraph.co.uk",
