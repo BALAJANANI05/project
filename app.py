@@ -155,8 +155,9 @@ def predict_news(text):
     elif ml_prediction_is_fake:
         # If no verification from trusted sources and ML model predicts fake, classify as FAKE
         final_prediction = "🟥 FAKE NEWS"
-
-
+    else:
+        # If no verification from trusted sources and ML model predicts real, classify as REAL (less confident)
+        final_prediction = "🟩 REAL NEWS (Unverified)"
 
     return final_prediction
 
