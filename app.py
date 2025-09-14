@@ -155,13 +155,10 @@ def predict_news(text):
     if is_verified:
         # If verification from trusted sources is successful, classify as REAL
         final_prediction = "🟩 REAL NEWS"
-    elif ml_prediction_is_fake:
+    else:
         # If no strong verification from trusted sources and ML model predicts fake, classify as FAKE
         final_prediction = "🟥 FAKE NEWS"
-    else:
-        # If no strong verification from trusted sources and ML model predicts real, classify as REAL (Unverified)
-        final_prediction = "🟩 REAL NEWS (Unverified)"
-
+    
 
     return final_prediction
 
@@ -268,17 +265,3 @@ with st.container():
             st.markdown(f"## {prediction}")
         else:
             st.warning("Please enter some text to analyze.")
-
-st.markdown("---") # Add a separator
-
-st.header("✨ Latest News from Trusted Sources")
-
-if st.button("Fetch Latest News"):
-    latest_news_data = get_latest_news_from_trusted_sources()
-    if latest_news_data:
-        for source, news_list in latest_news_data.items():
-            st.subheader(f"From {source}:")
-            for news_item in news_list:
-                st.write(f"- [{news_item['title']}]({news_item['url']})")
-    else:
-        st.info("Could not fetch latest news from trusted sources.")
