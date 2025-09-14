@@ -13,7 +13,7 @@ vectorizer = joblib.load("tfidf_vectorizer.pkl")
 trusted_sources = [
     # English & Global
     "bbc.com", "reuters.com", "apnews.com", "theguardian.com", "cnn.com", "nytimes.com",
-    "theatlantic.com", "economist.com", "aljazeera.com","ndtv.com","edition.cnn.com","news.google.com","aljazeera.com",
+    "theatlantic.com", "economist.com", "aljazeera.com","ndtv.com",
 
     # European & Multi-language broadcasters
     "dw.com",               # Deutsche Welle
@@ -39,7 +39,7 @@ trusted_sources = [
 
     # United States
     "nytimes.com", "washingtonpost.com", "wsj.com", "usatoday.com",
-    "latimes.com", "chicagotribune.com", "bostonglobe.com","ap.org","reutersagency.com","whitehouse.gov","edition.cnn.com",
+    "latimes.com", "chicagotribune.com", "bostonglobe.com",
 
     # United Kingdom
     "theguardian.com", "dailymail.co.uk", "thetimes.co.uk", "telegraph.co.uk",
@@ -148,16 +148,20 @@ def predict_news(text):
         st.write("Found supporting evidence from trusted sources:")
         for r in verified_sources:
             st.write(f"✔️ [{r['title']}]({r['url']})")
+    else:
+         st.write("⚠️ No strong supporting evidence found from trusted sources.")
+
 
     if is_verified:
         # If verification from trusted sources is successful, classify as REAL
         final_prediction = "🟩 REAL NEWS"
     elif ml_prediction_is_fake:
-        # If no verification from trusted sources and ML model predicts fake, classify as FAKE
+        # If no strong verification from trusted sources and ML model predicts fake, classify as FAKE
         final_prediction = "🟥 FAKE NEWS"
     else:
-        # If no verification from trusted sources and ML model predicts real, classify as REAL (less confident)
+        # If no strong verification from trusted sources and ML model predicts real, classify as REAL (Unverified)
         final_prediction = "🟩 REAL NEWS (Unverified)"
+
 
     return final_prediction
 
@@ -265,4 +269,16 @@ with st.container():
         else:
             st.warning("Please enter some text to analyze.")
 
+st.markdown("---") # Add a separator
 
+st.header("✨ Latest News from Trusted Sources")
+
+if st.button("Fetch Latest News"):
+    latest_news_data = get_latest_news_from_trusted_sources()
+    if latest_news_data:
+        for source, news_list in latest_news_data.items():
+            st.subheader(f"From {source}:")
+            for news_item in news_list:
+                st.write(f"- [{news_item['title']}]({news_item['url']})")
+    else:
+        st.info("Could not fetch latest news from trusted sources.")
