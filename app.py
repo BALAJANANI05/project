@@ -67,7 +67,7 @@ trusted_sources = [
     # Others
     "nypost.com", "iol.co.za", "denverpost.com", "seattletimes.com",
     "baltimoresun.com", "philly.com", "sacbee.com", "post-gazette.com",
-    "kansascity.com","globaltimes.cn","chinadaily.com.cn",
+    "kansascity.com","globaltimes.cn","chinadaily.com.cn","cgtn.com",
 
     # Taiwan
     "udn.com",
