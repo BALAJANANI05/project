@@ -2,33 +2,8 @@ import streamlit as st
 import joblib
 import requests
 from urllib.parse import urlparse
-import time
-import nltk
-from bs4 import BeautifulSoup # Import BeautifulSoup for parsing HTML
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-import re # Import re for cleaning text
-import nltk
-# from nltk.corpus import stopwords # Keep this import for stopwords
-# from nltk.tokenize import word_tokenize # Keep this import for tokenization
-
-# Download necessary NLTK data
-try:
-    nltk.download('punkt')
-except Exception as e:
-    print(f"Download failed: {e}")
-try:
-    nltk.data.find('tokenizers/punkt')
-except nltk.downloader.DownloadError: # Referencing through nltk.downloader
-    nltk.download('punkt')
-try:
-    nltk.data.find('corpora/stopwords')
-except nltk.downloader.DownloadError: # Referencing through nltk.downloader
-    nltk.download('stopwords')
-
-from nltk.corpus import stopwords # Import stopwords here
-from nltk.tokenize import word_tokenize # Import word_tokenize here
-
+import time # Import time for adding delays
+from bs4 import BeautifulSoup # Import BeautifulSoup for web scraping
 
 # Load model and vectorizer
 model = joblib.load("fake_news_model.pkl")
@@ -106,9 +81,6 @@ trusted_sources = [
 API_KEY = 'AIzaSyA4T2I7q1DetLy9zhbM68KRakDsQOnoo7w' # Replace with your actual API key
 SEARCH_ENGINE_ID = '37002a679147b437b' # Replace with your actual Search Engine ID
 
-# TF-IDF Vectorizer for content comparison (using the same settings as the news model)
-content_vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7)
-
 
 def google_search(query, num=5):
     url = 'https://www.googleapis.com/customsearch/v1'
@@ -134,80 +106,21 @@ def is_trusted_url(url):
     domain = urlparse(url).netloc.lower().replace("www.", "")
     return any(trusted in domain for trusted in trusted_sources)
 
-def clean_text(text):
-    # Remove HTML tags
-    clean = re.compile('<.*?>')
-    text = re.sub(clean, '', text)
-    # Remove special characters and numbers
-    text = re.sub(r'[^a-zA-Z\s]', '', text)
-    # Convert to lowercase
-    text = text.lower()
-    # Tokenize and remove stopwords
-    tokens = word_tokenize(text)
-    stop_words = set(stopwords.words('english'))
-    tokens = [word for word in tokens if word not in stop_words]
-    return ' '.join(tokens)
-
-def fetch_url_content(url):
-    try:
-        headers = {'User-Agent': 'Mozilla/5.0'} # Add User-Agent
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.content, 'html.parser')
-        # Extract text from common article tags
-        paragraphs = soup.find_all(['p', 'article', 'div'], {'class': re.compile(r'content|article|body|text', re.IGNORECASE)})
-        text_content = ' '.join([p.get_text() for p in paragraphs])
-        if not text_content: # If no specific tags found, get all text
-             text_content = soup.get_text()
-        return clean_text(text_content)
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching content from {url}: {e}")
-        return None
-
 def verify_with_sources(text, search_results):
     trusted_results = [r for r in search_results if is_trusted_url(r['url'])]
     if not trusted_results:
         return False, []
 
-    input_cleaned = clean_text(text)
-    if not input_cleaned:
-        return False, []
-
-    verified_sources = []
-    corpus = [input_cleaned] # Start corpus with the input text
-
-    # Collect cleaned content from trusted sources
-    source_contents = []
+    # Simple check: see if any trusted source snippet contains significant parts of the input text
+    # A more sophisticated approach would involve checking the actual linked page content
+    # and using NLP techniques for comparison.
+    text_lower = text.lower()
+    matching_sources = []
     for r in trusted_results:
-        content = fetch_url_content(r['url'])
-        if content and len(content.split()) > 20: # Only consider sources with substantial content
-            source_contents.append((r, content))
-            corpus.append(content)
+        if any(word in r['snippet'].lower() for word in text_lower.split()[:10]): # Check first 10 words
+             matching_sources.append(r)
 
-    if not source_contents:
-        return False, []
-
-    # Fit TF-IDF vectorizer on the combined corpus
-    # We need to fit the vectorizer here because the vocabulary depends on the fetched content
-    try:
-        content_vectorizer.fit(corpus)
-        input_vector = content_vectorizer.transform([input_cleaned])
-    except ValueError as e:
-         print(f"Error during TF-IDF fitting: {e}")
-         return False, [] # Handle cases where corpus is empty or has issues
-
-
-    # Calculate similarity
-    similarity_threshold = 0.1 # Adjust this threshold based on experimentation
-
-    for r, content in source_contents:
-        source_vector = content_vectorizer.transform([content])
-        similarity = cosine_similarity(input_vector, source_vector)[0][0]
-
-        if similarity > similarity_threshold:
-            verified_sources.append(r)
-
-    return bool(verified_sources), verified_sources
+    return bool(matching_sources), matching_sources
 
 
 def predict_news(text):
@@ -218,25 +131,57 @@ def predict_news(text):
     search_results = google_search(text)
     is_verified, verified_sources = verify_with_sources(text, search_results)
 
-    st.subheader("🔎 Verification from Trusted Sources:")
+
+    st.subheader("🔎 Verified Sources:")
     if verified_sources:
         st.write("Found supporting evidence from trusted sources:")
         for r in verified_sources:
             st.write(f"✔️ [{r['title']}]({r['url']})")
-        # If trusted sources are found and ML model predicts fake,
-        # consider it potentially real, but still show ML prediction.
-        # If trusted sources are found and ML model predicts real,
-        # confirm it as real.
         final_prediction = "🟩 REAL NEWS" if not ml_prediction_is_fake else "🟥 FAKE NEWS"
     else:
         st.write("⚠️ No strong supporting evidence found from trusted sources.")
         final_prediction = "🟥 FAKE NEWS" if ml_prediction_is_fake else "🟩 REAL NEWS"
 
-    st.subheader("🤖 ML Model Prediction:")
-    st.write("Based on the trained model:", "🟥 FAKE NEWS" if ml_prediction_is_fake else "🟩 REAL NEWS")
-
 
     return final_prediction
+
+def get_latest_news_from_source(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status() # Raise an exception for bad status codes
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        # This is a very basic example. You would need to inspect the HTML structure
+        # of each trusted news site to find the appropriate tags and classes
+        # for headlines and links. This will likely be different for each site.
+        headlines = soup.find_all(['h1', 'h2', 'h3', 'a'], limit=10) # Find potential headlines/links
+
+        news_list = []
+        for headline in headlines:
+            text = headline.get_text(strip=True)
+            link = headline.get('href')
+            if text and link and urlparse(link).netloc == urlparse(url).netloc: # Only include links from the same domain
+                news_list.append({'title': text, 'url': link})
+        return news_list
+
+    except requests.exceptions.RequestException as e:
+        st.warning(f"Could not fetch news from {url}: {e}")
+        return []
+    except Exception as e:
+        st.warning(f"Error parsing news from {url}: {e}")
+        return []
+
+
+def get_latest_news_from_trusted_sources(num_sources=3, num_headlines_per_source=3):
+    latest_news = {}
+    sources_to_check = trusted_sources[:num_sources] # Check a limited number of sources for demonstration
+
+    for source_url in sources_to_check:
+        news_from_source = get_latest_news_from_source(f"https://{source_url}")
+        if news_from_source:
+            latest_news[source_url] = news_from_source[:num_headlines_per_source] # Get a limited number of headlines
+
+    return latest_news
 
 
 # Streamlit app
@@ -299,8 +244,21 @@ with st.container():
     user_input = st.text_area("Paste your news content or headline here...", height=200)
     if st.button("Analyze News"):
         if user_input:
-            with st.spinner("Analyzing news..."):
-                 prediction = predict_news(user_input)
+            prediction = predict_news(user_input)
             st.markdown(f"## {prediction}")
         else:
             st.warning("Please enter some text to analyze.")
+
+st.markdown("---") # Add a separator
+
+st.header("✨ Latest News from Trusted Sources")
+
+if st.button("Fetch Latest News"):
+    latest_news_data = get_latest_news_from_trusted_sources()
+    if latest_news_data:
+        for source, news_list in latest_news_data.items():
+            st.subheader(f"From {source}:")
+            for news_item in news_list:
+                st.write(f"- [{news_item['title']}]({news_item['url']})")
+    else:
+        st.info("Could not fetch latest news from trusted sources.")
