@@ -50,7 +50,7 @@ trusted_sources = [
     "theglobeandmail.com", "nationalpost.com", "torontostar.com",
 
     # India
-    "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com",
+    "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com","pmindia.gov.in",
 
     # Australia
     "smh.com.au", "theage.com.au", "afr.com", "abc.net.au",
