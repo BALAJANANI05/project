@@ -31,10 +31,7 @@ trusted_sources = [
     "anadoluagency.com",    # Anadolu Agency
     "tass.com",             # TASS (Russia)
     "ipsnews.net",          # Inter Press Service
-"deccanherald.com","hindustantimes.com",
-"deccanherald.com","jagran.com","amarujala.com","manoramaonline.com","eenadu.net","dinamalar.com",
-"anandabazar.com","ndtv.com","indiatoday.in","timesnownews.com","aajtak.in","news18.com","thanthitv.com","puthiyathalaimurai.com","abpananda.abplive.in",
-  "tv9hindi.com","asianetnews.com",
+
     # Tamil-language major outlets
     "dailythanthi.com", "dinamalar.com", "dinamani.com", "malaimalar.com",
     "dinakaran.com", "tamil.thehindu.com", "thinaboomi.in", "theekkathir.in",
@@ -53,8 +50,7 @@ trusted_sources = [
     "theglobeandmail.com", "nationalpost.com", "torontostar.com",
 
     # India
-    "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com","pmindia.gov.in","tn.gov.in","it.tn.gov.in","tnsic.gov.in","tn.gov.in/stationeryprinting/gazette","tn.nic.in",
-
+    "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com",
 
     # Australia
     "smh.com.au", "theage.com.au", "afr.com", "abc.net.au",
@@ -270,3 +266,16 @@ with st.container():
         else:
             st.warning("Please enter some text to analyze.")
 
+st.markdown("---") # Add a separator
+
+st.header("✨ Latest News from Trusted Sources")
+
+if st.button("Fetch Latest News"):
+    latest_news_data = get_latest_news_from_trusted_sources()
+    if latest_news_data:
+        for source, news_list in latest_news_data.items():
+            st.subheader(f"From {source}:")
+            for news_item in news_list:
+                st.write(f"- [{news_item['title']}]({news_item['url']})")
+    else:
+        st.info("Could not fetch latest news from trusted sources.")
