@@ -71,7 +71,7 @@ trusted_sources = [
     "nypost.com", "iol.co.za", "denverpost.com", "seattletimes.com",
     "baltimoresun.com", "philly.com", "sacbee.com", "post-gazette.com",
     "kansascity.com","globaltimes.cn","chinadaily.com.cn","cgtn.com","scmp.com/topics/xi-jinping","nbcnews.com","pakistantoday.com",
-
+    "tn.gov.in",
     # Taiwan
     "udn.com",
 
