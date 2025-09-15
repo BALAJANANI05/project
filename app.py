@@ -14,7 +14,7 @@ trusted_sources = [
     # English & Global
     "bbc.com", "reuters.com", "apnews.com", "theguardian.com", "cnn.com", "nytimes.com",
     "theatlantic.com", "economist.com", "aljazeera.com","ndtv.com","today.yougov.com","abcnews.go.com","edition.cnn.com","whitehouse.gov",
-    "dailytimes.com.pk","pressgazette.co.uk","w3newspapers.com","themoscowtimes.com","tass.com","india.gov.in","pmindia.gov.in","pib.gov.in","en.wikipedia.org/wiki/Chief_Minister_of_Tamil_Nadu",
+    "dailytimes.com.pk","pressgazette.co.uk","w3newspapers.com","themoscowtimes.com","tass.com",
     
     # European & Multi-language broadcasters
     "dw.com",               # Deutsche Welle
@@ -53,7 +53,7 @@ trusted_sources = [
     "theglobeandmail.com", "nationalpost.com", "torontostar.com",
 
     # India
-    "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com",
+    "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com","newindianexpress.com","services.india.gov.in","india.gov.in","pmindia.gov.in","pib.gov.in",
 
     # Australia
     "smh.com.au", "theage.com.au", "afr.com", "abc.net.au",
