@@ -14,7 +14,8 @@ trusted_sources = [
     # English & Global
     "bbc.com", "reuters.com", "apnews.com", "theguardian.com", "cnn.com", "nytimes.com",
     "theatlantic.com", "economist.com", "aljazeera.com","ndtv.com","today.yougov.com","abcnews.go.com","edition.cnn.com","whitehouse.gov",
-
+    "dailytimes.com.pk","pressgazette.co.uk","w3newspapers.com","themoscowtimes.com","tass.com",
+    
     # European & Multi-language broadcasters
     "dw.com",               # Deutsche Welle
     "lemonde.fr",           # Le Monde (France)
@@ -39,13 +40,15 @@ trusted_sources = [
 
     # United States
     "nytimes.com", "washingtonpost.com", "wsj.com", "usatoday.com",
-    "latimes.com", "chicagotribune.com", "bostonglobe.com",
+    "latimes.com", "chicagotribune.com", "bostonglobe.com","news.un.org",
 
     # United Kingdom
     "theguardian.com", "dailymail.co.uk", "thetimes.co.uk", "telegraph.co.uk",
     "independent.co.uk", "ft.com", "metro.co.uk", "mirror.co.uk",
     "express.co.uk", "thesun.co.uk",
 
+    #UAE
+    "gulfnews.com","khaleejtimes.com","gulftoday.ae",
     # Canada
     "theglobeandmail.com", "nationalpost.com", "torontostar.com",
 
@@ -67,13 +70,16 @@ trusted_sources = [
     # Others
     "nypost.com", "iol.co.za", "denverpost.com", "seattletimes.com",
     "baltimoresun.com", "philly.com", "sacbee.com", "post-gazette.com",
-    "kansascity.com","globaltimes.cn","chinadaily.com.cn","cgtn.com","scmp.com/topics/xi-jinping",
+    "kansascity.com","globaltimes.cn","chinadaily.com.cn","cgtn.com","scmp.com/topics/xi-jinping","nbcnews.com","pakistantoday.com",
 
     # Taiwan
     "udn.com",
 
     # South Korea
-    "koreajoongangdaily.joins.com"
+    "koreajoongangdaily.joins.com","soompi.com","sbsstar.net","koreaboo.com",
+
+    #Japan
+    "japantimes.co.jp","japantoday.com"
 ]
 
 # Google Search API settings
