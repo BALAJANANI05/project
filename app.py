@@ -14,7 +14,7 @@ trusted_sources = [
     # English & Global
     "bbc.com", "reuters.com", "apnews.com", "theguardian.com", "cnn.com", "nytimes.com",
     "theatlantic.com", "economist.com", "aljazeera.com","ndtv.com","today.yougov.com","abcnews.go.com","edition.cnn.com","whitehouse.gov",
-    "dailytimes.com.pk","pressgazette.co.uk","w3newspapers.com","themoscowtimes.com","tass.com","india.gov.in"
+    "dailytimes.com.pk","pressgazette.co.uk","w3newspapers.com","themoscowtimes.com","tass.com","india.gov.in","pmindia.gov.in","pib.gov.in",
     
     # European & Multi-language broadcasters
     "dw.com",               # Deutsche Welle
