@@ -14,8 +14,7 @@ trusted_sources = [
     # English & Global
     "bbc.com", "reuters.com", "apnews.com", "theguardian.com", "cnn.com", "nytimes.com",
     "theatlantic.com", "economist.com", "aljazeera.com","ndtv.com","today.yougov.com","abcnews.go.com","edition.cnn.com","whitehouse.gov",
-    "dailytimes.com.pk","pressgazette.co.uk","w3newspapers.com","themoscowtimes.com","tass.com",
-    
+ "dailytimes.com.pk","pressgazette.co.uk","w3newspapers.com","themoscowtimes.com","tass.com",
     # European & Multi-language broadcasters
     "dw.com",               # Deutsche Welle
     "lemonde.fr",           # Le Monde (France)
@@ -40,20 +39,19 @@ trusted_sources = [
 
     # United States
     "nytimes.com", "washingtonpost.com", "wsj.com", "usatoday.com",
-    "latimes.com", "chicagotribune.com", "bostonglobe.com","news.un.org",
+    "latimes.com", "chicagotribune.com", "bostonglobe.com",
 
     # United Kingdom
     "theguardian.com", "dailymail.co.uk", "thetimes.co.uk", "telegraph.co.uk",
     "independent.co.uk", "ft.com", "metro.co.uk", "mirror.co.uk",
     "express.co.uk", "thesun.co.uk",
 
-    #UAE
-    "gulfnews.com","khaleejtimes.com","gulftoday.ae",
     # Canada
     "theglobeandmail.com", "nationalpost.com", "torontostar.com",
 
     # India
     "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com","newindianexpress.com","services.india.gov.in","india.gov.in","pmindia.gov.in","pib.gov.in",
+
 
     # Australia
     "smh.com.au", "theage.com.au", "afr.com", "abc.net.au",
@@ -70,14 +68,15 @@ trusted_sources = [
     # Others
     "nypost.com", "iol.co.za", "denverpost.com", "seattletimes.com",
     "baltimoresun.com", "philly.com", "sacbee.com", "post-gazette.com",
-    "kansascity.com","globaltimes.cn","chinadaily.com.cn","cgtn.com","scmp.com/topics/xi-jinping","nbcnews.com","pakistantoday.com",
-    "tn.gov.in",
+    "kansascity.com","globaltimes.cn","chinadaily.com.cn","cgtn.com","scmp.com/topics/xi-jinping",
+"nbcnews.com","pakistantoday.com","tn.gov.in",
     # Taiwan
     "udn.com",
 
     # South Korea
     "koreajoongangdaily.joins.com","soompi.com","sbsstar.net","koreaboo.com",
 
+    
     #Japan
     "japantimes.co.jp","japantoday.com"
 ]
@@ -99,7 +98,7 @@ def google_search(query, num=5):
         for item in res.json().get('items', []):
              results.append({
                 'title': item['title'],
-                'snippet': item['snippet'], # Include snippet for verification
+                'snippet': item.get('snippet', ''), # Handle missing snippet
                 'url': item['link']
             })
         return results
@@ -164,7 +163,7 @@ def predict_news(text):
     else:
         # If no strong verification from trusted sources and ML model predicts fake, classify as FAKE
         final_prediction = "🟥 FAKE NEWS"
-    
+
 
     return final_prediction
 
