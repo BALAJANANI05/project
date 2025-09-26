@@ -14,7 +14,7 @@ trusted_sources = [
     # English & Global
     "bbc.com", "reuters.com", "apnews.com", "theguardian.com", "cnn.com", "nytimes.com",
     "theatlantic.com", "economist.com", "aljazeera.com","ndtv.com","today.yougov.com","abcnews.go.com","edition.cnn.com","whitehouse.gov",
- "dailytimes.com.pk","pressgazette.co.uk","w3newspapers.com","themoscowtimes.com","tass.com",
+
     # European & Multi-language broadcasters
     "dw.com",               # Deutsche Welle
     "lemonde.fr",           # Le Monde (France)
@@ -50,8 +50,7 @@ trusted_sources = [
     "theglobeandmail.com", "nationalpost.com", "torontostar.com",
 
     # India
-    "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com","newindianexpress.com","services.india.gov.in","india.gov.in","pmindia.gov.in","pib.gov.in",
-
+    "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com",
 
     # Australia
     "smh.com.au", "theage.com.au", "afr.com", "abc.net.au",
@@ -69,16 +68,12 @@ trusted_sources = [
     "nypost.com", "iol.co.za", "denverpost.com", "seattletimes.com",
     "baltimoresun.com", "philly.com", "sacbee.com", "post-gazette.com",
     "kansascity.com","globaltimes.cn","chinadaily.com.cn","cgtn.com","scmp.com/topics/xi-jinping",
-"nbcnews.com","pakistantoday.com","tn.gov.in",
+
     # Taiwan
     "udn.com",
 
     # South Korea
-    "koreajoongangdaily.joins.com","soompi.com","sbsstar.net","koreaboo.com",
-
-    
-    #Japan
-    "japantimes.co.jp","japantoday.com"
+    "koreajoongangdaily.joins.com"
 ]
 
 # Google Search API settings
@@ -98,7 +93,7 @@ def google_search(query, num=5):
         for item in res.json().get('items', []):
              results.append({
                 'title': item['title'],
-                'snippet': item.get('snippet', ''), # Handle missing snippet
+                'snippet': item['snippet'], # Include snippet for verification
                 'url': item['link']
             })
         return results
@@ -146,6 +141,10 @@ def predict_news(text):
 
     search_results = google_search(text)
     is_verified, verified_sources = verify_with_sources(text, search_results)
+
+    # Add a warning if the ML model predicts REAL but verification fails
+    if not is_verified and not ml_prediction_is_fake:
+        st.warning("⚠️ The ML model predicted REAL, but verification with trusted sources failed. Please exercise caution.")
 
 
     st.subheader("🔎 Verified Sources:")
