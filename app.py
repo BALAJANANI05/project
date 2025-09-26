@@ -6,8 +6,8 @@ import time # Import time for adding delays
 from bs4 import BeautifulSoup # Import BeautifulSoup for web scraping
 
 # Load model and vectorizer
-model = joblib.load("fake_news_model.pkl")
-vectorizer = joblib.load("tfidf_vectorizer.pkl")
+model = joblib.load("fake_news_model.pkl") # Load the Passive Aggressive Classifier
+vectorizer = joblib.load("tfidf_vectorizer.pkl") # Load the corresponding TF-IDF vectorizer
 
 # Trusted sources
 trusted_sources = [
