@@ -68,13 +68,13 @@ trusted_sources = [
     # Others
     "nypost.com", "iol.co.za", "denverpost.com", "seattletimes.com",
     "baltimoresun.com", "philly.com", "sacbee.com", "post-gazette.com",
-    "kansascity.com","globaltimes.cn","chinadaily.com.cn","cgtn.com","scmp.com/topics/xi-jinping",
-
+    "kansascity.com","globaltimes.cn","chinadaily.com.cn","cgtn.com","scmp.com/topics/xi-jinping","olympics.com","worldathletics.org",
+     "sports.ndtv.com","globalnews.ca","japantimes.co.jp","nknews.org",
     # Taiwan
     "udn.com",
 
     # South Korea
-    "koreajoongangdaily.joins.com"
+    "koreajoongangdaily.joins.com","koreaboo.com","allkpop.com"
 ]
 
 # Google Search API settings
