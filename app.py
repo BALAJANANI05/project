@@ -69,7 +69,7 @@ trusted_sources = [
     "nypost.com", "iol.co.za", "denverpost.com", "seattletimes.com",
     "baltimoresun.com", "philly.com", "sacbee.com", "post-gazette.com",
     "kansascity.com","globaltimes.cn","chinadaily.com.cn","cgtn.com","scmp.com/topics/xi-jinping","olympics.com","worldathletics.org",
-     "sports.ndtv.com","globalnews.ca","japantimes.co.jp","nknews.org",
+     "sports.ndtv.com","globalnews.ca","japantimes.co.jp","nknews.org","cia.gov",
     # Taiwan
     "udn.com",
 
