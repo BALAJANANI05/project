@@ -51,7 +51,7 @@ trusted_sources = [
 
     # India
     "timesofindia.indiatimes.com","thehindu.com", "indianexpress.com","newindianexpress.com","services.india.gov.in",
-    "india.gov.in","pmindia.gov.in","pib.gov.in","presidentofindia.gov.in",
+    "india.gov.in","pmindia.gov.in","pib.gov.in","presidentofindia.gov.in","en.wikipedia.org/wiki/President_of_India",
 
     # Australia
     "smh.com.au", "theage.com.au", "afr.com", "abc.net.au",
