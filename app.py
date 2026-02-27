@@ -270,16 +270,8 @@ st.markdown("Enter a news article or headline to check whether it is **REAL or F
 st.sidebar.title("📊 Model Info")
 st.sidebar.write("Algorithm: Passive Aggressive Classifier")
 st.sidebar.write("Technique: TF-IDF + NLP")
-st.sidebar.write("Accuracy: ~92%")
+st.sidebar.write("Accuracy: 99.40%")
 
-# HOW IT WORKS
-st.subheader("⚙️ How It Works")
-st.markdown("""
-1. 🧹 Clean and preprocess the text  
-2. 🔢 Convert text using TF-IDF  
-3. 🤖 Predict using Machine Learning model  
-4. 🌐 Verify with trusted Google sources  
-""")
 
 # SAMPLE BUTTONS
 st.subheader("🧪 Try Sample News")
@@ -327,20 +319,15 @@ if st.button("🔍 Analyze News"):
                 st.error(f"⚠️ FAKE NEWS ({confidence:.2f}% confidence)")
                 st.warning("⚠️ This news may be misleading. Verify before sharing.")
 
-# IMPORTANT WORDS (Explainability)
-import numpy as np
-if user_input:
-    vec = vectorizer.transform([user_input])
-    feature_names = vectorizer.get_feature_names_out()
-    scores = vec.toarray()[0]
-
-    top_indices = np.argsort(scores)[-5:]
-
-    st.subheader("🔍 Important Words Influencing Prediction")
-    for i in top_indices:
-        if scores[i] > 0:
-            st.write(f"• {feature_names[i]}")
-
+# Use a container for input and button
+with st.container():
+    user_input = st.text_area("Paste your news content or headline here...", height=200)
+    if st.button("Analyze News"):
+        if user_input:
+            prediction = predict_news(user_input)
+            st.markdown(f"## {prediction}")
+        else:
+            st.warning("Please enter some text to analyze.")
 # FOOTER
 st.markdown("---")
 st.markdown("👨‍💻 Developed by BalaJanani | Powered by Machine Learning 🚀")
