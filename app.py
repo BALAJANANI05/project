@@ -271,18 +271,15 @@ st.sidebar.write("Technique: TF-IDF + NLP")
 st.sidebar.write("Accuracy: 99.40%")
 
 
-# TEXT INPUT
-user_input = ""
-user_input = st.text_area("✍️ Enter News Article", value=user_input, height=200)
-
-# ANALYZE BUTTON
-if st.button("🔍 Analyze News"):
-    if user_input.strip() == "":
-        st.warning("Please enter some text!")
-    else:
-        with st.spinner("Analyzing..."):
-            vec = vectorizer.transform([user_input])
-            pred = model.predict(vec)[0]
+# Use a container for input and button
+with st.container():
+    user_input = st.text_area("✍️ Enter or Paste your news content or headline here...", height=200)
+    if st.button("🔍 Analyze News"):
+        if user_input:
+            prediction = predict_news(user_input)
+            st.markdown(f"## {prediction}")
+        else:
+            st.warning("Please enter some text to analyze.")
 
         
 # FOOTER
