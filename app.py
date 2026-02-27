@@ -273,23 +273,6 @@ st.sidebar.write("Technique: TF-IDF + NLP")
 st.sidebar.write("Accuracy: 99.40%")
 
 
-# SAMPLE BUTTONS
-st.subheader("🧪 Try Sample News")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    if st.button("Try Fake News Example"):
-        user_input = "Breaking! Celebrity caught in shocking scandal spreading viral misinformation!"
-    else:
-        user_input = ""
-
-with col2:
-    if st.button("Try Real News Example"):
-        user_input = "The government released an official report on economic growth and policy updates."
-    else:
-        user_input = user_input if 'user_input' in locals() else ""
-
 # TEXT INPUT
 user_input = st.text_area("✍️ Enter News Article", value=user_input, height=200)
 
@@ -319,15 +302,7 @@ if st.button("🔍 Analyze News"):
                 st.error(f"⚠️ FAKE NEWS ({confidence:.2f}% confidence)")
                 st.warning("⚠️ This news may be misleading. Verify before sharing.")
 
-# Use a container for input and button
-with st.container():
-    user_input = st.text_area("Paste your news content or headline here...", height=200)
-    if st.button("Analyze News"):
-        if user_input:
-            prediction = predict_news(user_input)
-            st.markdown(f"## {prediction}")
-        else:
-            st.warning("Please enter some text to analyze.")
+
 # FOOTER
 st.markdown("---")
 st.markdown("👨‍💻 Developed by BalaJanani | Powered by Machine Learning 🚀")
