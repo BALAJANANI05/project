@@ -258,8 +258,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Streamlit app
-st.set_page_config(layout="wide", page_title="Fake News Detector", page_icon="📰")
 
 # Title + Tagline
 st.title("📰 Smart Fake News Detector")
@@ -274,6 +272,7 @@ st.sidebar.write("Accuracy: 99.40%")
 
 
 # TEXT INPUT
+user_input = ""
 user_input = st.text_area("✍️ Enter News Article", value=user_input, height=200)
 
 # ANALYZE BUTTON
