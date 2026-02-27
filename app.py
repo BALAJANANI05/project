@@ -213,7 +213,7 @@ st.markdown(
     """
     <style>
     body {
-         background-image: url('https://i.ytimg.com/vi/OI7b8uI2x-s/maxresdefault.jpg');
+         background-image: url('https://www.istockphoto.com/illustrations/color-background');
     background-size: cover; /* cover the entire screen */
     background-repeat: no-repeat;
         font-family: 'Arial', sans-serif;
@@ -259,17 +259,8 @@ st.markdown(
 )
 
 
-# Title + Tagline
-st.title("📰 Smart Fake News Detector")
-st.markdown("### Detect truth in seconds using AI")
-st.markdown("Enter a news article or headline to check whether it is **REAL or FAKE** using Machine Learning + Google Verification.")
-
-# Sidebar (Model Info)
-st.sidebar.title("📊 Model Info")
-st.sidebar.write("Algorithm: Passive Aggressive Classifier")
-st.sidebar.write("Technique: TF-IDF + NLP")
-st.sidebar.write("Accuracy: 99.40%")
-
+st.title("📰 Smart Fake News Detector (with Google Verification)")
+st.markdown("Enter a news article or headline to detect if it's REAL or FAKE using machine learning and verify with trusted Google sources.")
 
 # Use a container for input and button
 with st.container():
@@ -280,6 +271,12 @@ with st.container():
             st.markdown(f"## {prediction}")
         else:
             st.warning("Please enter some text to analyze.")
+
+# Sidebar (Model Info)
+st.sidebar.title("📊 Model Info")
+st.sidebar.write("Algorithm: Passive Aggressive Classifier")
+st.sidebar.write("Technique: TF-IDF + NLP")
+st.sidebar.write("Accuracy: 99.40%")
 
         
 # FOOTER
