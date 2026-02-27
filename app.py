@@ -129,7 +129,7 @@ def verify_with_sources(text, search_results):
 
     # Determine if verification is successful based on the score and number of matching sources
     # This threshold might need tuning based on your data and desired strictness
-    verification_threshold = len(keywords) * 0.8 # Example: require 80% of keywords to be found
+   verification_threshold = max(3, len(keywords) * 0.3)
     is_verified = score >= verification_threshold and len(matching_sources) > 0
 
     return is_verified, matching_sources
