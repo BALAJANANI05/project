@@ -284,24 +284,7 @@ if st.button("🔍 Analyze News"):
             vec = vectorizer.transform([user_input])
             pred = model.predict(vec)[0]
 
-            # Confidence score
-            try:
-                proba = model.predict_proba(vec)[0]
-                confidence = max(proba) * 100
-            except:
-                confidence = 85.0  # fallback if not available
-
-            prediction = predict_news(user_input)
-
-            # RESULT DISPLAY
-            if "REAL" in prediction:
-                st.success(f"✅ REAL NEWS ({confidence:.2f}% confidence)")
-                st.info("✅ This news appears reliable based on analysis.")
-            else:
-                st.error(f"⚠️ FAKE NEWS ({confidence:.2f}% confidence)")
-                st.warning("⚠️ This news may be misleading. Verify before sharing.")
-
-
+        
 # FOOTER
 st.markdown("---")
 st.markdown("👨‍💻 Developed by BalaJanani | Powered by Machine Learning 🚀")
