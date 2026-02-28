@@ -77,65 +77,98 @@ trusted_sources = [
     "koreajoongangdaily.joins.com","koreaboo.com","allkpop.com"
 ]
 
-# Google Search API settings
-# Replace with your actual API key and Search Engine ID
-API_KEY = 'AIzaSyBL1dzP3NsbrL01vnNBFfmLa3Whp3d0GPA' # Replace with your actual API key
-SEARCH_ENGINE_ID = '37002a679147b437b' # Replace with your actual Search Engine ID
+import streamlit as st
+import joblib
+from google import genai
+from google.genai import types
 
-import time
+# --- 1. CONFIGURATION & MODELS ---
+# Get your free key at: https://aistudio.google.com/
+GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE" 
+client = genai.Client(api_key=GEMINI_API_KEY)
 
+# Load your local ML models
+try:
+    model = joblib.load("fake_news_model.pkl")
+    vectorizer = joblib.load("tfidf_vectorizer.pkl")
+except Exception as e:
+    st.error(f"Error loading local ML models: {e}")
 
-def google_search(query, num=5):
-    url = 'https://www.googleapis.com/customsearch/v1'
-    params = {'key': API_KEY, 'cx': SEARCH_ENGINE_ID, 'q': query, 'num': num}
+# --- 2. THE AI FACT-CHECKER (Replaces old Google Search) ---
+def verify_with_gemini(text):
+    """Uses Gemini 2.0 + Google Search to verify news in real-time."""
     try:
-        time.sleep(1) # Add a small delay
-        res = requests.get(url, params=params)
-        res.raise_for_status()  # Raise an exception for bad status codes
-        results = []
-        for item in res.json().get('items', []):
-             results.append({
-                'title': item['title'],
-                'snippet': item['snippet'], # Include snippet for verification
-                'url': item['link']
-            })
-        return results
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error during Google Search: {e}")
-        return []
+        # Enable the live Google Search tool
+        search_tool = types.Tool(google_search=types.GoogleSearch())
+        
+        # Craft a prompt for fact-checking
+        prompt = f"Fact check this claim: '{text}'. Is it TRUE or FAKE? Search for recent news and give a clear verdict."
+        
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt,
+            config=types.GenerateContentConfig(tools=[search_tool])
+        )
+        
+        # Extract source links from the metadata
+        sources = []
+        if response.candidates[0].grounding_metadata.grounding_chunks:
+            for chunk in response.candidates[0].grounding_metadata.grounding_chunks:
+                sources.append({'title': chunk.web.title, 'url': chunk.web.uri})
+                
+        return response.text, sources
+    except Exception as e:
+        return f"AI Verification failed: {str(e)}", []
 
+# --- 3. MAIN PREDICTION LOGIC ---
+def predict_news(text):
+    # Step A: Local Machine Learning Prediction
+    vec = vectorizer.transform([text])
+    ml_is_fake = model.predict(vec)[0] == 1 
+    
+    # Step B: AI Fact-Check with Google Search
+    with st.spinner('🔍 Verifying with Live Google Search...'):
+        analysis, verified_sources = verify_with_gemini(text)
+    
+    # Step C: Display Analysis
+    st.subheader("🤖 AI Fact-Check Report")
+    st.write(analysis)
+    
+    if verified_sources:
+        st.write("🔗 **Evidence from Trusted Sources:**")
+        for src in verified_sources:
+            st.write(f"✔️ [{src['title']}]({src['url']})")
+    
+    # Final Decision Logic
+    is_ai_flagged = "fake" in analysis.lower() or "false" in analysis.lower()
+    
+    if is_ai_flagged or ml_is_fake:
+        # If either flags it, we alert the user
+        if not is_ai_flagged and ml_is_fake:
+             st.warning("⚠️ ML model flags this as suspicious, though AI found no direct debunking.")
+        return "🟥 FAKE NEWS"
+    
+    return "🟩 REAL NEWS"
 
-def is_trusted_url(url):
-    domain = urlparse(url).netloc.lower().replace("www.", "")
-    return any(trusted in domain for trusted in trusted_sources)
+# --- 4. STREAMLIT UI ---
+st.set_page_config(layout="wide", page_title="Smart Fake News Detector", page_icon="📰")
 
-def verify_with_sources(text, search_results):
-    trusted_results = [r for r in search_results if is_trusted_url(r['url'])]
-    if not trusted_results:
-        return False, []
+st.title("📰 Smart Fake News Detector")
+st.markdown("This app uses a **Hybrid System**: Local Machine Learning + Google AI Real-time Verification.")
 
-    text_lower = text.lower()
-    # A more robust check: calculate a score based on keyword overlap and presence in trusted sources
-    keywords = text_lower.split()
-    score = 0
-    matching_sources = []
+user_input = st.text_area("✍️ Enter news headline to analyze:", height=150)
 
-    for r in trusted_results:
-        snippet_lower = r['snippet'].lower()
-        title_lower = r['title'].lower()
-        # Increase score for each keyword found in snippet or title
-        keyword_matches = sum(word in snippet_lower or word in title_lower for word in keywords)
-        score += keyword_matches
-        if keyword_matches > 0: # Consider a source as "matching" if at least one keyword is found
-             matching_sources.append(r)
+if st.button("Analyze News"):
+    if user_input:
+        prediction = predict_news(user_input)
+        st.header(prediction)
+    else:
+        st.warning("Please enter some text first.")
 
-    # Determine if verification is successful based on the score and number of matching sources
-    # This threshold might need tuning based on your data and desired strictness
-    verification_threshold = len(keywords) * 0.8 # Example: require 80% of keywords to be found
-    is_verified = score >= verification_threshold and len(matching_sources) > 0
-
-    return is_verified, matching_sources
-
+st.sidebar.title("📊 System Info")
+st.sidebar.info("Using Gemini 2.0 Flash for real-time grounding.")
+st.markdown("---")
+st.markdown("👨‍💻 Developed by Janani | Powered by Google AI 🚀")
 
 def predict_news(text):
     vec = vectorizer.transform([text])
@@ -169,45 +202,39 @@ def predict_news(text):
 
     return final_prediction
 
-def get_latest_news_from_source(url):
+# --- ADD THIS NEW CODE ---
+from google import genai
+from google.genai import types
+
+# Use your new Google AI Studio Key here
+GEMINI_API_KEY = "AIzaSyBL1dzP3NsbrL01vnNBFfmLa3Whp3d0GPA" 
+client = genai.Client(api_key=GEMINI_API_KEY)
+
+def verify_with_gemini(text):
+    """Uses Gemini 2.0 + Google Search to verify news in real-time."""
     try:
-        response = requests.get(url)
-        response.raise_for_status() # Raise an exception for bad status codes
-        soup = BeautifulSoup(response.content, 'html.parser')
-
-        # This is a very basic example. You would need to inspect the HTML structure
-        # of each trusted news site to find the appropriate tags and classes
-        # for headlines and links. This will likely be different for each site.
-        headlines = soup.find_all(['h1', 'h2', 'h3', 'a'], limit=10) # Find potential headlines/links
-
-        news_list = []
-        for headline in headlines:
-            text = headline.get_text(strip=True)
-            link = headline.get('href')
-            if text and link and urlparse(link).netloc == urlparse(url).netloc: # Only include links from the same domain
-                news_list.append({'title': text, 'url': link})
-        return news_list
-
-    except requests.exceptions.RequestException as e:
-        st.warning(f"Could not fetch news from {url}: {e}")
-        return []
+        # Enable the live Google Search tool
+        search_tool = types.Tool(google_search=types.GoogleSearch())
+        
+        # Craft a prompt for fact-checking
+        prompt = f"Fact check this claim: '{text}'. Is it TRUE or FAKE? Search for recent news and give a clear verdict."
+        
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt,
+            config=types.GenerateContentConfig(tools=[search_tool])
+        )
+        
+        # Extract source links from the metadata
+        sources = []
+        if response.candidates[0].grounding_metadata.grounding_chunks:
+            for chunk in response.candidates[0].grounding_metadata.grounding_chunks:
+                sources.append({'title': chunk.web.title, 'url': chunk.web.uri})
+                
+        return response.text, sources
     except Exception as e:
-        st.warning(f"Error parsing news from {url}: {e}")
-        return []
-
-
-def get_latest_news_from_trusted_sources(num_sources=3, num_headlines_per_source=3):
-    latest_news = {}
-    sources_to_check = trusted_sources[:num_sources] # Check a limited number of sources for demonstration
-
-    for source_url in sources_to_check:
-        news_from_source = get_latest_news_from_source(f"https://{source_url}")
-        if news_from_source:
-            latest_news[source_url] = news_from_source[:num_headlines_per_source] # Get a limited number of headlines
-
-    return latest_news
-
-
+        return f"AI Verification failed: {str(e)}", []
+# --- END NEW CODE ---
 # Streamlit app
 st.set_page_config(layout="wide", page_title="Fake News Detector", page_icon="📰") # Set favicon here
 
