@@ -18,28 +18,33 @@ except Exception as e:
 # --- 2. AI FACT-CHECKER (Replaces old Google Search) ---
 def verify_with_gemini(text):
     """Uses Gemini 2.0 + Google Search to verify news in real-time."""
-    try:
-        # Enable the live Google Search tool
-        search_tool = types.Tool(google_search=types.GoogleSearch())
+    max_retries = 2
+    for attempt in range(max_retries):
+        try:
+            search_tool = types.Tool(google_search=types.GoogleSearch())
+            prompt = f"Fact check this claim: '{text}'. Is it TRUE or FAKE? Search for recent news and give a clear verdict."
+            
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=prompt,
+                config=types.GenerateContentConfig(tools=[search_tool])
+            )
+            
+            sources = []
+            if response.candidates[0].grounding_metadata.grounding_chunks:
+                for chunk in response.candidates[0].grounding_metadata.grounding_chunks:
+                    sources.append({'title': chunk.web.title, 'url': chunk.web.uri})
+                    
+            return response.text, sources
         
-        # Craft a prompt for fact-checking
-        prompt = f"Fact check this claim: '{text}'. Is it TRUE or FAKE? Search for recent news and give a clear verdict."
-        
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt,
-            config=types.GenerateContentConfig(tools=[search_tool])
-        )
-        
-        # Extract source links from the metadata
-        sources = []
-        if response.candidates[0].grounding_metadata.grounding_chunks:
-            for chunk in response.candidates[0].grounding_metadata.grounding_chunks:
-                sources.append({'title': chunk.web.title, 'url': chunk.web.uri})
-                
-        return response.text, sources
-    except Exception as e:
-        return f"AI Verification failed: {str(e)}", []
+        except Exception as e:
+            if "429" in str(e):
+                st.warning(f"Quota exceeded. Waiting 20 seconds before retrying (Attempt {attempt+1}/{max_retries})...")
+                time.sleep(20) # Wait and retry
+            else:
+                return f"AI Verification failed: {str(e)}", []
+    
+    return "AI Verification failed: Quota limit reached.", []
 
 # --- 3. MAIN PREDICTION LOGIC ---
 def predict_news(text):
