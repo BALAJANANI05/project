@@ -3,8 +3,9 @@ import joblib
 from openai import OpenAI
 
 # --- 1. CONFIGURATION ---
-# OpenRouter API Key
+# Use a fresh key from https://openrouter.ai/keys
 OPENROUTER_API_KEY = "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" 
+
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=OPENROUTER_API_KEY,
