@@ -123,14 +123,17 @@ def verify_with_gemini(text):
 # --- 3. MAIN PREDICTION LOGIC ---
 def predict_news(text):
     # Step A: Local Machine Learning Prediction
+    # This checks if the text *looks* like fake news based on past data
     vec = vectorizer.transform([text])
-    ml_is_fake = model.predict(vec)[0] == 1 
+    pred = model.predict(vec)
+    ml_prediction_is_fake = pred[0] == 1
     
-    # Step B: AI Fact-Check with Google Search
+    # Step B: Real-Time Fact-Check with Gemini
+    # This replaces 'google_search(text)' and bypasses the 403 error
     with st.spinner('🔍 Verifying with Live Google Search...'):
         analysis, verified_sources = verify_with_gemini(text)
     
-    # Step C: Display Analysis
+    # Step C: Display Detailed AI Analysis
     st.subheader("🤖 AI Fact-Check Report")
     st.write(analysis)
     
@@ -139,17 +142,17 @@ def predict_news(text):
         for src in verified_sources:
             st.write(f"✔️ [{src['title']}]({src['url']})")
     
-    # Final Decision Logic
+    # Step D: Final Decision Logic
+    # We combine the ML model result with the Gemini analysis
     is_ai_flagged = "fake" in analysis.lower() or "false" in analysis.lower()
     
-    if is_ai_flagged or ml_is_fake:
-        # If either flags it, we alert the user
-        if not is_ai_flagged and ml_is_fake:
+    if is_ai_flagged or ml_prediction_is_fake:
+        # If either system flags it, we alert the user
+        if not is_ai_flagged and ml_prediction_is_fake:
              st.warning("⚠️ ML model flags this as suspicious, though AI found no direct debunking.")
         return "🟥 FAKE NEWS"
     
     return "🟩 REAL NEWS"
-
 # --- 4. STREAMLIT UI ---
 st.set_page_config(layout="wide", page_title="Smart Fake News Detector", page_icon="📰")
 
