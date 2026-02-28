@@ -5,7 +5,7 @@ from google.genai import types
 
 # --- 1. CONFIGURATION & MODELS ---
 # Get your free key at: https://aistudio.google.com/
-GEMINI_API_KEY = "AIzaSyBL1dzP3NsbrL01vnNBFfmLa3Whp3d0GPA" 
+GEMINI_API_KEY = "AIzaSyD7Wfwd2_34GnbOps0G45MT0dKOy_V6KrI" 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 # Load local ML models
