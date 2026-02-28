@@ -2,6 +2,7 @@ import streamlit as st
 import joblib
 from google import genai
 from google.genai import types
+import time
 
 # --- 1. CONFIGURATION & MODELS ---
 # Get your free key at: https://aistudio.google.com/
