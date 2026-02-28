@@ -4,7 +4,7 @@ from openai import OpenAI
 
 # --- 1. CONFIGURATION ---
 # OpenRouter API Key
-OPENROUTER_API_KEY = "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" 
+OPENROUTER_API_KEY = "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" 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=OPENROUTER_API_KEY,
