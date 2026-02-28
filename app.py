@@ -6,7 +6,7 @@ import time
 
 # --- 1. CONFIGURATION & MODELS ---
 # Get your free key at: https://aistudio.google.com/
-GEMINI_API_KEY = "AIzaSyDjW7QAFnU-UWvdiMtV_s1TtHllby9t8gc" 
+GEMINI_API_KEY = "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" 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 # Load local ML models
