@@ -77,33 +77,43 @@ trusted_sources = [
     "koreajoongangdaily.joins.com","koreaboo.com","allkpop.com"
 ]
 
-# Google Search API settings
-# Replace with your actual API key and Search Engine ID
-API_KEY = 'ced725ec13234e6c9328dfdc74f68967' # Replace with your actual API key
-SEARCH_ENGINE_ID = '37002a679147b437b' # Replace with your actual Search Engine ID
+# NewsAPI settings
+NEWS_API_KEY = 'ced725ec13234e6c9328dfdc74f68967'
 
 import time
 
 
-def google_search(query, num=5):
-    url = 'https://www.googleapis.com/customsearch/v1'
-    params = {'key': API_KEY, 'cx': SEARCH_ENGINE_ID, 'q': query, 'num': num}
-    try:
-        time.sleep(1) # Add a small delay
-        res = requests.get(url, params=params)
-        res.raise_for_status()  # Raise an exception for bad status codes
-        results = []
-        for item in res.json().get('items', []):
-             results.append({
-                'title': item['title'],
-                'snippet': item['snippet'], # Include snippet for verification
-                'url': item['link']
-            })
-        return results
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error during Google Search: {e}")
-        return []
+def newsapi_search(query, num=5):
+    url = "https://newsapi.org/v2/everything"
 
+    params = {
+       "qInTitle": query,
+        "apiKey": NEWS_API_KEY,
+        "pageSize": num,
+        "language": "en",
+        "sortBy": "relevancy"
+    }
+
+    try:
+        time.sleep(1)
+        res = requests.get(url, params=params)
+        res.raise_for_status()
+
+        results = []
+        articles = res.json().get("articles", [])
+
+        for item in articles:
+            results.append({
+                "title": item["title"],
+                "snippet": item.get("description", ""),
+                "url": item["url"]
+            })
+
+        return results
+
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error during NewsAPI search: {e}")
+        return []
 
 def is_trusted_url(url):
     domain = urlparse(url).netloc.lower().replace("www.", "")
@@ -142,7 +152,7 @@ def predict_news(text):
     pred = model.predict(vec)
     ml_prediction_is_fake = pred[0] == 1
 
-    search_results = google_search(text)
+    search_results = newsapi_search(text)
     is_verified, verified_sources = verify_with_sources(text, search_results)
 
     # Add a warning if the ML model predicts REAL but verification fails
