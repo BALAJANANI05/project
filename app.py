@@ -87,12 +87,11 @@ def newsapi_search(query, num=5):
     url = "https://newsapi.org/v2/everything"
 
     params = {
-       "qInTitle": query,
-        "apiKey": NEWS_API_KEY,
-        "pageSize": num,
-        "language": "en",
-        "sortBy": "relevancy"
-    }
+    "q": query,
+    "apiKey": NEWS_API_KEY,
+    "pageSize": num,
+    "sortBy": "publishedAt"
+}
 
     try:
         time.sleep(1)
@@ -108,7 +107,7 @@ def newsapi_search(query, num=5):
                 "snippet": item.get("description", ""),
                 "url": item["url"]
             })
-st.write("Raw API response:", res.json())
+        st.write("Raw API response:", res.json())
         return results
 
     except requests.exceptions.RequestException as e:
@@ -148,21 +147,10 @@ def predict_news(text):
     pred = model.predict(vec)
     ml_prediction_is_fake = pred[0] == 1
 
-    search_results = newsapi_search(text)
+    important_words = " ".join(text.split()[:5])
+    search_results = newsapi_search(important_words)
+
     is_verified, verified_sources = verify_with_sources(text, search_results)
-
-    # Add a warning if the ML model predicts REAL but verification fails
-    if not is_verified and not ml_prediction_is_fake:
-        st.warning("⚠️ The ML model predicted REAL, but verification with trusted sources failed. Please exercise caution.")
-
-
-    st.subheader("🔎 Verified Sources:")
-    if verified_sources:
-        st.write("Found supporting evidence from trusted sources:")
-        for r in verified_sources:
-            st.write(f"✔️ [{r['title']}]({r['url']})")
-    else:
-         st.write("⚠️ No strong supporting evidence found from trusted sources.")
 
 
     if is_verified:
