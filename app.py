@@ -121,28 +121,24 @@ def is_trusted_url(url):
 
 def verify_with_sources(text, search_results):
     trusted_results = [r for r in search_results if is_trusted_url(r['url'])]
+
     if not trusted_results:
         return False, []
 
     text_lower = text.lower()
-    # A more robust check: calculate a score based on keyword overlap and presence in trusted sources
-    keywords = text_lower.split()
-    score = 0
+    keywords = [word for word in text_lower.split() if len(word) > 3]  # ignore tiny words
+
     matching_sources = []
 
     for r in trusted_results:
-        snippet_lower = r['snippet'].lower()
-        title_lower = r['title'].lower()
-        # Increase score for each keyword found in snippet or title
-        keyword_matches = sum(word in snippet_lower or word in title_lower for word in keywords)
-        score += keyword_matches
-        if keyword_matches > 0: # Consider a source as "matching" if at least one keyword is found
-             matching_sources.append(r)
+        combined = (r['title'] + " " + r['snippet']).lower()
 
-    # Determine if verification is successful based on the score and number of matching sources
-    # This threshold might need tuning based on your data and desired strictness
-    verification_threshold = len(keywords) * 0.8 # Example: require 80% of keywords to be found
-    is_verified = score >= verification_threshold and len(matching_sources) > 0
+        match_count = sum(1 for word in keywords if word in combined)
+
+        if match_count >= 2:   # if at least 2 keywords match
+            matching_sources.append(r)
+
+    is_verified = len(matching_sources) >= 1
 
     return is_verified, matching_sources
 
@@ -170,11 +166,11 @@ def predict_news(text):
 
 
     if is_verified:
-        # If verification from trusted sources is successful, classify as REAL
-        final_prediction = "🟩 REAL NEWS"
+    final_prediction = "🟩 REAL NEWS"
+    elif not ml_prediction_is_fake:
+    final_prediction = "🟨 POSSIBLY REAL (not enough online verification)"
     else:
-        # If no strong verification from trusted sources and ML model predicts fake, classify as FAKE
-        final_prediction = "🟥 FAKE NEWS"
+    final_prediction = "🟥 FAKE NEWS"
 
 
     return final_prediction
