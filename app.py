@@ -79,7 +79,7 @@ trusted_sources = [
 
 # Google Search API settings
 # Replace with your actual API key and Search Engine ID
-API_KEY = 'AIzaSyBL1dzP3NsbrL01vnNBFfmLa3Whp3d0GPA' # Replace with your actual API key
+API_KEY = 'ced725ec13234e6c9328dfdc74f68967' # Replace with your actual API key
 SEARCH_ENGINE_ID = '37002a679147b437b' # Replace with your actual Search Engine ID
 
 import time
