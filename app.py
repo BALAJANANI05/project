@@ -108,7 +108,7 @@ def newsapi_search(query, num=5):
                 "snippet": item.get("description", ""),
                 "url": item["url"]
             })
-
+st.write("Raw API response:", res.json())
         return results
 
     except requests.exceptions.RequestException as e:
