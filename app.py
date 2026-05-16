@@ -166,11 +166,11 @@ def predict_news(text):
 
 
     if is_verified:
-    final_prediction = "🟩 REAL NEWS"
+       final_prediction = "🟩 REAL NEWS"
     elif not ml_prediction_is_fake:
-    final_prediction = "🟨 POSSIBLY REAL (not enough online verification)"
+       final_prediction = "🟨 POSSIBLY REAL (not enough online verification)"
     else:
-    final_prediction = "🟥 FAKE NEWS"
+       final_prediction = "🟥 FAKE NEWS"
 
 
     return final_prediction
